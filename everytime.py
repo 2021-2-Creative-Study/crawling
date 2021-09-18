@@ -2,6 +2,7 @@ from selenium import webdriver
 import random, time
 import pandas as pd
 from bs4 import BeautifulSoup
+from tqdm import tqdm
 
 # 가상브라우저 사용
 
@@ -27,9 +28,9 @@ lecture = pd.read_csv('lecture.csv')
 
 #강의 -> 강의평가
 lecture_review_list=[]
-url_id_list = lecture.url_id.astype(str) 
+url_id_list = lecture.url_id.astype(str)
 
-for url_id in url_id_list:
+for url_id in tqdm(url_id_list):
     #강의 페이지로 넘어가기
     url = "https://everytime.kr/lecture/view/"+url_id
     rand_value = random.uniform(2,5)
@@ -48,7 +49,6 @@ for url_id in url_id_list:
 
     professor_name = soup.select_one("#container > div.side.head > p:nth-of-type(1) > span").text
     review_list = soup.select("article")
-    print(lecture_name, professor_name)
     
     #강의리뷰 
     index = 0

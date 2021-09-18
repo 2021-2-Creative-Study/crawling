@@ -65,6 +65,6 @@ while review_counter <= num_lecture:
 lecture = pd.DataFrame(lecture_list)
 lecture = lecture.drop_duplicates()
 lecture.columns = ["lecture_name", "url_id"]
-lecture.to_csv("lecture.csv", index=False, header=True)
+lecture.to_csv("lecture_list.csv", index=False, header=True)
 
 driver.quit()
