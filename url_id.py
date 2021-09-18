@@ -1,4 +1,7 @@
 from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+import time
+import pandas as pd
 
 # 가상 브라우저 사용
 options = webdriver.ChromeOptions()
@@ -19,19 +22,49 @@ driver.implicitly_wait(1)
 
 # make 'url_id_list'
 
-## ActionChains 생성
-action = webdriver.ActionChains(driver)
-## 스크롤 focus 조절 parameter
-focus = 20
-## 스크롤 focus selector base string
-scroll_base = '#container > div:nth-child(4) > div > a:nth-child(' + str(focus) + ')'
+## url_list
+lecture_list = []
 
 # 강의평가 메뉴로 이동
 driver.find_element_by_xpath('//*[@id="menu"]/li[3]/a').click()
 
-# 스크롤 focus를 맞출 review를 선택하고
-review = driver.find_element_by_css_selector(scroll_base)
-# 해당 review에 포커스 맞추기
-action.move_to_element(review).perform()
-# 특정 review 클릭(이후 현재 url 가져오기)
-driver.find_element_by_xpath('//*[@id="container"]/div[2]/div/a[40]').click()
+## ActionChains 생성
+action = webdriver.ActionChains(driver)
+
+## 스크롤 focus 조절 parameter
+window = 20
+## lecture review counter
+review_counter = 1
+## 가져올 강의 수
+num_lecture = 100
+
+## lecture reivew xpath base string
+def updateLectureXpath(cur_review_counter):
+    return '//*[@id="container"]/div[2]/div/a[' + str(cur_review_counter) + ']'
+
+while review_counter <= num_lecture:
+
+    if review_counter == window:
+        body = driver.find_element_by_css_selector('body')
+
+        body.send_keys(Keys.PAGE_DOWN)
+        time.sleep(1)
+
+        window += 20
+
+    driver.find_element_by_xpath(updateLectureXpath(review_counter)).click()
+
+    driver.implicitly_wait(3)
+
+    lecture_list.append([driver.find_element_by_css_selector('#container > div.side.head > h2').text, driver.current_url[34:]])
+
+    driver.back()
+
+    review_counter += 1
+
+lecture = pd.DataFrame(lecture_list)
+lecture = lecture.drop_duplicates()
+lecture.columns = ["lecture_name", "url_id"]
+lecture.to_csv("lecture.csv", index=False, header=True)
+
+driver.quit()
