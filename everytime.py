@@ -29,7 +29,7 @@ lecture = pd.read_csv('lecture.csv')
 lecture_review_list=[]
 url_id_list = lecture.url_id.astype(str) 
 
-for url_id in url_id_list[0:3]:
+for url_id in url_id_list:
     #강의 페이지로 넘어가기
     url = "https://everytime.kr/lecture/view/"+url_id
     rand_value = random.uniform(2,5)
@@ -78,7 +78,7 @@ for url_id in url_id_list[0:3]:
             )
             index+=1
     lecture_reviews = pd.DataFrame(lecture_review_list)
-    lecture_reviews.to_csv(f'{lecture_name}_{professor_name}.csv', index=False, header=True)
+    lecture_reviews.to_csv(f'./review_data/{lecture_name}_{professor_name}.csv', index=False, header=True)
     lecture_review_list = []
 
 driver.quit()
